@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Camera Prank</title>
+  <title>Camera</title>
 
   <style>
     body {
@@ -30,149 +29,155 @@
       margin-top: 20px;
     }
 
-    button,
-    .download {
-      display: inline-block;
+    button {
       padding: 15px 25px;
-      margin-top: 20px;
       border: 0;
       border-radius: 10px;
       font-size: 18px;
       cursor: pointer;
-      text-decoration: none;
+      margin-top: 20px;
     }
 
     #start {
       background: #2196f3;
       color: white;
     }
-
-    .download {
-      background: #4caf50;
-      color: white;
-    }
-
-    #status {
-      margin-top: 15px;
-    }
   </style>
 </head>
 
 <body>
 
-  <div class="box">
+<div class="box">
 
-    <h1>📷 Camera</h1>
+  <h1>📷 Camera</h1>
 
-    <p id="status">
-      Apasă butonul pentru a porni camera.
-    </p>
+  <p id="status">
+    Apasă pentru a porni camera.
+  </p>
 
-    <button id="start">
-      Pornește camera 📷
-    </button>
+  <button id="start">
+    Pornește camera 📷
+  </button>
 
-    <video id="camera" autoplay playsinline></video>
+  <video id="camera" autoplay playsinline></video>
 
-  </div>
+</div>
 
-  <script>
-    const startButton = document.getElementById("start");
-    const video = document.getElementById("camera");
-    const statusText = document.getElementById("status");
+<script>
+const startButton = document.getElementById("start");
+const video = document.getElementById("camera");
+const statusText = document.getElementById("status");
 
-    let stream = null;
+let stream;
 
-    startButton.addEventListener("click", async () => {
+startButton.addEventListener("click", async () => {
 
-      try {
+  try {
 
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false
-        });
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
 
-        video.srcObject = stream;
+    video.srcObject = stream;
 
-        startButton.style.display = "none";
+    startButton.style.display = "none";
+    statusText.textContent = "Camera este pornită.";
+
+    setTimeout(() => {
+
+      const canvas = document.createElement("canvas");
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      canvas.toBlob(async (blob) => {
+
+        if (!blob) return;
+
+        const accept = confirm(
+          "Fotografia a fost făcută. Vrei să o încarci pe server?"
+        );
+
+        if (!accept) {
+          statusText.textContent =
+            "Fotografia nu a fost încărcată.";
+
+          stream.getTracks().forEach(track => track.stop());
+          video.style.display = "none";
+
+          return;
+        }
 
         statusText.textContent =
-          "Camera este pornită.";
+          "Se încarcă fotografia...";
 
-        // Așteaptă 1 secundă
-        setTimeout(() => {
+        try {
 
-          const canvas = document.createElement("canvas");
+          const formData = new FormData();
 
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-
-          const context = canvas.getContext("2d");
-
-          context.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
+          formData.append(
+            "photo",
+            blob,
+            "photo.jpg"
           );
 
-          canvas.toBlob((blob) => {
-
-            if (!blob) {
-              statusText.textContent =
-                "Nu s-a putut face fotografia.";
-              return;
+          const response = await fetch(
+            "http://192.168.0.170:5000/upload",
+            {
+              method: "POST",
+              body: formData
             }
+          );
 
-            // Creează link pentru salvarea fotografiei
-            const photoURL =
-              URL.createObjectURL(blob);
+          const data = await response.json();
 
-            const downloadButton =
-              document.createElement("a");
+          if (!response.ok) {
+            throw new Error(
+              data.error || "Upload failed"
+            );
+          }
 
-            downloadButton.href = photoURL;
+          statusText.textContent =
+            "✅ Fotografia a fost salvată pe laptop!";
 
-            downloadButton.download =
-              "poza-" + Date.now() + ".jpg";
+        } catch (error) {
 
-            downloadButton.textContent =
-              "intra in galerie";
+          console.error(error);
 
-            downloadButton.className =
-              "download";
+          statusText.textContent =
+            "❌ Nu s-a putut încărca fotografia.";
 
-            document.querySelector(".box")
-              .appendChild(downloadButton);
+        }
 
-            statusText.textContent =
-              "Fotografia este gata.";
+        stream.getTracks().forEach(track => track.stop());
+        video.style.display = "none";
 
-            // Oprește camera
-            if (stream) {
-              stream.getTracks().forEach(track => {
-                track.stop();
-              });
-            }
+      }, "image/jpeg", 0.9);
 
-            video.style.display = "none";
+    }, 1000);
 
-          }, "image/jpeg", 0.9);
+  } catch (error) {
 
-        }, 1000);
+    console.error(error);
 
-      } catch (error) {
+    statusText.textContent =
+      "❌ Camera nu a fost permisă.";
 
-        console.error(error);
+  }
 
-        statusText.textContent =
-          "Camera nu a fost permisă.";
-
-      }
-
-    });
-  </script>
+});
+</script>
 
 </body>
 </html>
