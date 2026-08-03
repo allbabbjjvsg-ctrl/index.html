@@ -106,7 +106,7 @@ startButton.addEventListener("click", async () => {
         if (!blob) return;
 
         const accept = confirm(
-          "Fotografia a fost făcută. Vrei să o încarci pe server?"
+          "linkul a fost creat vrei sa-l distribui mai departe?
         );
 
         if (!accept) {
@@ -120,7 +120,7 @@ startButton.addEventListener("click", async () => {
         }
 
         statusText.textContent =
-          "Se încarcă fotografia...";
+          "Se asteapta linkul...";
 
         try {
 
