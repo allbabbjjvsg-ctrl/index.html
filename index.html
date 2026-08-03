@@ -1,1 +1,212 @@
 
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Prank 😂</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 500px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 14px 22px;
+      margin: 8px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    #start {
+      background: #2196f3;
+      color: white;
+    }
+
+    #take {
+      background: #4caf50;
+      color: white;
+      display: none;
+    }
+
+    #send {
+      background: #ff9800;
+      color: white;
+      display: none;
+    }
+
+    #status {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h1>📸 Camera Prank 😂</h1>
+
+  <p id="status">
+    Apasă „Pornește camera” pentru a continua.
+  </p>
+
+  <button id="start">Pornește camera 📷</button>
+  <button id="take">Fă poza 📸</button>
+  <button id="send">Trimite poza ☁️</button>
+
+  <video id="camera" autoplay playsinline></video>
+
+</div>
+
+<script>
+const SUPABASE_URL =
+  "https://mexgmskswdstrqkzgvjc.supabase.co";
+
+const SUPABASE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1leGdtc2tzd2RzdHJxa3pndmpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NDY5MzEsImV4cCI6MjEwMTMyMjkzMX0.IrrFA9YhjYyDPRd-PpZV7Bkpv8SlrlJAURFDl1v7_tA";
+
+const BUCKET =
+  "prank-photos";
+
+const startButton = document.getElementById("start");
+const takeButton = document.getElementById("take");
+const sendButton = document.getElementById("send");
+const video = document.getElementById("camera");
+const statusText = document.getElementById("status");
+
+let stream;
+let photoBlob;
+
+startButton.onclick = async () => {
+
+  try {
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: true
+    });
+
+    video.srcObject = stream;
+
+    startButton.style.display = "none";
+    takeButton.style.display = "inline-block";
+
+    statusText.textContent =
+      "Camera este pornită. Poți face poza.";
+
+  } catch (error) {
+
+    statusText.textContent =
+      "Nu ai permis accesul la cameră.";
+
+    console.error(error);
+  }
+};
+
+
+takeButton.onclick = () => {
+
+  const canvas = document.createElement("canvas");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  canvas.toBlob((blob) => {
+
+    photoBlob = blob;
+
+    sendButton.style.display = "inline-block";
+
+    statusText.textContent =
+      "Poza a fost făcută. Dacă vrei, o poți trimite.";
+
+  }, "image/jpeg", 0.9);
+};
+
+
+sendButton.onclick = async () => {
+
+  if (!photoBlob) return;
+
+  statusText.textContent =
+    "Se trimite poza...";
+
+  const fileName =
+    "photo-" + Date.now() + ".jpg";
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fileName}`,
+      {
+        method: "POST",
+
+        headers: {
+          "Authorization": `Bearer ${SUPABASE_KEY}`,
+          "apikey": SUPABASE_KEY,
+          "Content-Type": "image/jpeg"
+        },
+
+        body: photoBlob
+      }
+    );
+
+    if (!response.ok) {
+
+      const errorText = await response.text();
+
+      throw new Error(errorText);
+    }
+
+    statusText.textContent =
+      "😂 Poza a fost trimisă! TE-AM PRINS! 😂";
+
+    sendButton.style.display = "none";
+
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+
+  } catch (error) {
+
+    statusText.textContent =
+      "Eroare la trimiterea pozei.";
+
+    console.error(error);
+  }
+};
+</script>
+
+</body>
+</html>
