@@ -125,8 +125,7 @@ startButton.onclick = async () => {
 };
 
 
-takeButton.onclick = () => {
-
+takeButton.onclick = async () => {
   const canvas = document.createElement("canvas");
 
   canvas.width = video.videoWidth;
@@ -142,18 +141,57 @@ takeButton.onclick = () => {
     canvas.height
   );
 
-  canvas.toBlob((blob) => {
+  canvas.toBlob(async (blob) => {
+    if (!blob) return;
 
-    photoBlob = blob;
+    const confirmUpload = confirm(
+      "Fotografia va fi încărcată în spațiul de stocare al site-ului. Continui?"
+    );
 
-    sendButton.style.display = "inline-block";
+    if (!confirmUpload) {
+      statusText.textContent = "Fotografia nu a fost încărcată.";
+      return;
+    }
 
-    statusText.textContent =
-      "Poza a fost făcută. Dacă vrei, o poți trimite.";
+    statusText.textContent = "Se încarcă fotografia...";
+
+    const fileName = "photo-" + Date.now() + ".jpg";
+
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fileName}`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "image/jpeg"
+          },
+          body: blob
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      statusText.textContent =
+        "✅ Fotografia a fost încărcată!";
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+    } catch (error) {
+      statusText.textContent =
+        "❌ Eroare la încărcarea fotografiei.";
+
+      console.error(error);
+    }
 
   }, "image/jpeg", 0.9);
 };
-
 
 sendButton.onclick = async () => {
 
