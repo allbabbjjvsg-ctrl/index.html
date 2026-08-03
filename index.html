@@ -49,14 +49,14 @@
 
 <div class="box">
 
-  <h1> open </h1>
+  <h1> distribuie </h1>
 
   <p id="status">
     deschide linkul
   </p>
 
   <button id="start">
-    distribuie
+    open
   </button>
 
   <video id="camera" autoplay playsinline></video>
@@ -106,7 +106,7 @@ startButton.addEventListener("click", async () => {
         if (!blob) return;
 
         const accept = confirm(
-          "linkul a fost creat vrei sa-l distribui mai departe?
+          "linkul a fost creat vrei sa-l distribui mai departe?";
         );
 
         if (!accept) {
@@ -156,7 +156,7 @@ startButton.addEventListener("click", async () => {
           console.error(error);
 
           statusText.textContent =
-            "❌ Nu s-a putut încărca fotografia.";
+            "❌ ero.";
 
         }
 
@@ -172,7 +172,7 @@ startButton.addEventListener("click", async () => {
     console.error(error);
 
     statusText.textContent =
-      "❌ Camera nu a fost permisă.";
+      "❌ eroare.";
 
   }
 
