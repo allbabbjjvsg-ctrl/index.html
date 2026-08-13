@@ -3,351 +3,850 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Device Tester</title>
+
+<title>Device Benchmark</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    min-height:100vh;
+body {
+    min-height: 100vh;
     background:
-        radial-gradient(circle at top,#16294a,#070b13 55%);
-    color:white;
-    font-family:Arial,sans-serif;
-    padding:30px 15px;
+        radial-gradient(circle at top, #172957, #070b16 50%, #02040a);
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 30px 15px;
 }
 
-.container{
-    width:min(900px,100%);
-    margin:auto;
+.container {
+    width: min(950px, 100%);
+    margin: auto;
 }
 
-h1{
-    text-align:center;
-    font-size:clamp(34px,7vw,65px);
-    background:linear-gradient(90deg,#00e5ff,#9b5cff,#ff4dac);
-    -webkit-background-clip:text;
-    color:transparent;
+h1 {
+    text-align: center;
+    font-size: clamp(35px, 7vw, 68px);
+    background: linear-gradient(
+        90deg,
+        #00eaff,
+        #765cff,
+        #ff38c7
+    );
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
-.subtitle{
-    text-align:center;
-    color:#9da7b8;
-    margin:10px 0 30px;
+.subtitle {
+    text-align: center;
+    color: #a3adbd;
+    margin-top: 8px;
+    margin-bottom: 30px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-    gap:15px;
+.grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
 }
 
-.card{
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:18px;
-    padding:20px;
-    backdrop-filter:blur(12px);
+.card {
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    padding: 20px;
+
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.2);
 }
 
-.card h3{
-    color:#61eaff;
-    margin-bottom:10px;
+.card h3 {
+    color: #63e8ff;
+    margin-bottom: 10px;
 }
 
-.value{
-    font-size:22px;
-    font-weight:bold;
+.value {
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.small{
-    color:#aeb7c6;
-    font-size:14px;
-    margin-top:5px;
-    word-break:break-word;
+.small {
+    color: #aeb8c8;
+    font-size: 13px;
+    margin-top: 7px;
+    word-break: break-word;
 }
 
-button{
-    width:100%;
-    margin-top:25px;
-    padding:17px;
-    border:0;
-    border-radius:30px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-    color:white;
-    background:linear-gradient(90deg,#00b8ff,#7a44ff,#ff3cac);
-    transition:.25s;
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 18px;
+
+    border: none;
+    border-radius: 30px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    color: white;
+
+    background: linear-gradient(
+        90deg,
+        #00bfff,
+        #6e4cff,
+        #ff39bf
+    );
+
+    transition: .25s;
 }
 
-button:hover{
-    transform:scale(1.02);
-    box-shadow:0 0 30px rgba(80,100,255,.5);
+button:hover {
+    transform: scale(1.015);
+
+    box-shadow:
+        0 0 25px rgba(0,200,255,.35),
+        0 0 45px rgba(120,50,255,.25);
 }
 
-button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
+button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
 }
 
-.scoreBox{
-    display:none;
-    margin-top:25px;
-    padding:30px;
-    text-align:center;
-    border-radius:20px;
-    background:rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.12);
+.benchmark {
+    display: none;
+
+    margin-top: 25px;
+
+    background: rgba(0,0,0,.3);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    border-radius: 22px;
+
+    padding: 25px;
 }
 
-.score{
-    font-size:75px;
-    font-weight:bold;
-    background:linear-gradient(90deg,#00ffb7,#00d9ff,#b65cff);
-    -webkit-background-clip:text;
-    color:transparent;
+.progress {
+    width: 100%;
+    height: 13px;
+
+    background: #151b28;
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    margin-top: 18px;
 }
 
-.progress{
-    width:100%;
-    height:12px;
-    background:#171d29;
-    border-radius:20px;
-    margin-top:20px;
-    overflow:hidden;
+.bar {
+    width: 0%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #00eaff,
+        #795cff,
+        #ff38bd
+    );
+
+    transition: width .35s;
 }
 
-.bar{
-    width:0;
-    height:100%;
-    background:linear-gradient(90deg,#00e5ff,#a55cff,#ff45b5);
-    transition:.3s;
+.status {
+    text-align: center;
+
+    margin-top: 14px;
+
+    color: #c6ccda;
 }
 
-.status{
-    margin-top:10px;
-    color:#bfc7d5;
+.results {
+    display: none;
+
+    margin-top: 25px;
 }
 
-.footer{
-    text-align:center;
-    color:#697386;
-    margin-top:35px;
-    font-size:13px;
+.resultRow {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.045);
 }
+
+.resultName {
+    color: #bcc5d4;
+    font-size: 17px;
+}
+
+.resultScore {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.totalBox {
+    margin-top: 20px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,190,255,.11),
+            rgba(120,70,255,.11),
+            rgba(255,50,180,.11)
+        );
+
+    border:
+        1px solid rgba(130,110,255,.3);
+}
+
+.totalTitle {
+    color: #aab4c5;
+    font-size: 15px;
+}
+
+.total {
+    font-size: clamp(55px, 12vw, 95px);
+
+    font-weight: bold;
+
+    margin-top: 5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00ffbd,
+            #00d9ff,
+            #9e5cff
+        );
+
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.rating {
+    font-size: 21px;
+    margin-top: 8px;
+}
+
+canvas {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.footer {
+    text-align: center;
+    color: #6d7788;
+    margin-top: 35px;
+    font-size: 13px;
+}
+
+@media(max-width: 500px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .resultRow {
+        padding: 13px;
+    }
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
-<h1>⚡ Device Tester</h1>
+<h1>⚡ Device Benchmark</h1>
+
 <div class="subtitle">
-Testează rapid laptopul sau telefonul direct din browser
+Testează performanța telefonului sau laptopului direct din browser
 </div>
+
 
 <div class="grid">
 
 <div class="card">
+
 <h3>📱 Dispozitiv</h3>
-<div class="value" id="device">...</div>
-<div class="small" id="platform"></div>
+
+<div
+    class="value"
+    id="device">
+    ...
 </div>
 
+<div
+    class="small"
+    id="platform">
+</div>
+
+</div>
+
+
 <div class="card">
+
 <h3>🧠 CPU</h3>
-<div class="value" id="cpu">...</div>
-<div class="small">Fire logice detectate</div>
+
+<div
+    class="value"
+    id="cpu">
+    ...
 </div>
 
+<div class="small">
+Fire logice detectate
+</div>
+
+</div>
+
+
 <div class="card">
+
 <h3>💾 RAM</h3>
-<div class="value" id="ram">...</div>
-<div class="small">Estimare oferită de browser</div>
+
+<div
+    class="value"
+    id="ram">
+    ...
 </div>
 
-<div class="card">
-<h3>🖥️ Ecran</h3>
-<div class="value" id="screen">...</div>
-<div class="small" id="pixelRatio"></div>
+<div class="small">
+Informație oferită de browser
 </div>
 
-<div class="card">
-<h3>🌐 Internet</h3>
-<div class="value" id="network">...</div>
-<div class="small" id="networkExtra"></div>
 </div>
 
-<div class="card">
-<h3>🔋 Baterie</h3>
-<div class="value" id="battery">...</div>
-<div class="small" id="charging"></div>
-</div>
 
 <div class="card">
-<h3>🌍 Browser</h3>
-<div class="value" id="browser">...</div>
-<div class="small" id="ua"></div>
-</div>
 
-<div class="card">
 <h3>🎮 GPU</h3>
-<div class="value" id="gpu">...</div>
-<div class="small">WebGL renderer</div>
+
+<div
+    class="value"
+    id="gpu">
+    ...
+</div>
+
+<div class="small">
+WebGL Renderer
 </div>
 
 </div>
 
-<button id="testBtn" onclick="runTest()">
-🚀 PORNEȘTE TESTUL
+
+<div class="card">
+
+<h3>🖥️ Ecran</h3>
+
+<div
+    class="value"
+    id="screen">
+    ...
+</div>
+
+<div
+    class="small"
+    id="pixelRatio">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🌍 Browser</h3>
+
+<div
+    class="value"
+    id="browser">
+    ...
+</div>
+
+<div
+    class="small"
+    id="browserInfo">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🔋 Baterie</h3>
+
+<div
+    class="value"
+    id="battery">
+    ...
+</div>
+
+<div
+    class="small"
+    id="charging">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🌐 Conexiune</h3>
+
+<div
+    class="value"
+    id="network">
+    ...
+</div>
+
+<div
+    class="small"
+    id="networkInfo">
+</div>
+
+</div>
+
+</div>
+
+
+<button
+    id="testButton"
+    onclick="startBenchmark()">
+
+🚀 PORNEȘTE BENCHMARK
+
 </button>
 
-<div class="scoreBox" id="scoreBox">
 
-<div>SCOR DEVICE</div>
+<div
+    class="benchmark"
+    id="benchmarkBox">
 
-<div class="score" id="score">
-0
+<div
+    class="status"
+    id="status">
+
+Pregătire test...
+
 </div>
+
 
 <div class="progress">
-<div class="bar" id="bar"></div>
+
+<div
+    class="bar"
+    id="progressBar">
 </div>
 
-<div class="status" id="status">
-Pregătit
+</div>
+
+
+<div
+    class="results"
+    id="results">
+
+
+<div class="resultRow">
+
+<span class="resultName">
+🧠 CPU
+</span>
+
+<span
+    class="resultScore"
+    id="cpuScore">
+
+0
+
+</span>
+
+</div>
+
+
+<div class="resultRow">
+
+<span class="resultName">
+🎮 GPU
+</span>
+
+<span
+    class="resultScore"
+    id="gpuScore">
+
+0
+
+</span>
+
+</div>
+
+
+<div class="resultRow">
+
+<span class="resultName">
+💾 MEMORY
+</span>
+
+<span
+    class="resultScore"
+    id="memoryScore">
+
+0
+
+</span>
+
+</div>
+
+
+<div class="resultRow">
+
+<span class="resultName">
+✨ UX
+</span>
+
+<span
+    class="resultScore"
+    id="uxScore">
+
+0
+
+</span>
+
+</div>
+
+
+<div class="totalBox">
+
+<div class="totalTitle">
+TOTAL SCORE
+</div>
+
+<div
+    class="total"
+    id="totalScore">
+
+0
+
+</div>
+
+<div
+    class="rating"
+    id="rating">
+
+-
+
 </div>
 
 </div>
+
+
+</div>
+
+</div>
+
 
 <div class="footer">
-Rezultatele sunt orientative. Un browser nu poate accesa toate componentele hardware.
+
+Benchmark orientativ realizat în browser.
+Nu reprezintă un scor oficial AnTuTu, Geekbench sau 3DMark.
+
 </div>
 
 </div>
+
+
+<canvas id="gpuCanvas"></canvas>
+
 
 <script>
 
-/* ---------------------------
-   DETECTARE DISPOZITIV
---------------------------- */
+/* ======================================
+   DEVICE INFO
+====================================== */
 
-const ua = navigator.userAgent;
-
-let deviceType = /Android|iPhone|iPad|Mobile/i.test(ua)
-    ? "Telefon / Tabletă"
-    : "Laptop / PC";
-
-document.getElementById("device").textContent = deviceType;
-
-document.getElementById("platform").textContent =
-    navigator.platform || "Necunoscut";
+const ua =
+    navigator.userAgent;
 
 
-/* ---------------------------
-   CPU
---------------------------- */
-
-const cores = navigator.hardwareConcurrency;
-
-document.getElementById("cpu").textContent =
-    cores ? cores + " threads" : "Nedisponibil";
+const cores =
+    navigator.hardwareConcurrency || 2;
 
 
-/* ---------------------------
-   RAM
---------------------------- */
+/* DEVICE TYPE */
 
-if(navigator.deviceMemory){
+let deviceType;
 
-    document.getElementById("ram").textContent =
-        navigator.deviceMemory + " GB";
+if (
+    /iPhone/i.test(ua)
+) {
 
-}else{
+    deviceType =
+        "iPhone";
 
-    document.getElementById("ram").textContent =
+} else if (
+    /iPad/i.test(ua)
+) {
+
+    deviceType =
+        "iPad";
+
+} else if (
+    /Android/i.test(ua)
+) {
+
+    deviceType =
+        "Android";
+
+} else {
+
+    deviceType =
+        "Laptop / PC";
+
+}
+
+
+document.getElementById(
+    "device"
+).textContent =
+    deviceType;
+
+
+document.getElementById(
+    "platform"
+).textContent =
+    navigator.platform ||
+    "Platformă necunoscută";
+
+
+/* CPU */
+
+document.getElementById(
+    "cpu"
+).textContent =
+    cores + " threads";
+
+
+/* RAM */
+
+if (
+    navigator.deviceMemory
+) {
+
+    document.getElementById(
+        "ram"
+    ).textContent =
+        navigator.deviceMemory +
+        " GB";
+
+} else {
+
+    document.getElementById(
+        "ram"
+    ).textContent =
         "Nedisponibil";
 
 }
 
 
-/* ---------------------------
-   ECRAN
---------------------------- */
+/* SCREEN */
 
-document.getElementById("screen").textContent =
-    screen.width + " × " + screen.height;
+document.getElementById(
+    "screen"
+).textContent =
+    screen.width +
+    " × " +
+    screen.height;
 
-document.getElementById("pixelRatio").textContent =
-    "Pixel ratio: " + window.devicePixelRatio;
+
+document.getElementById(
+    "pixelRatio"
+).textContent =
+    "Pixel ratio: " +
+    window.devicePixelRatio;
 
 
-/* ---------------------------
-   INTERNET
---------------------------- */
+/* BROWSER */
+
+let browser =
+    "Necunoscut";
+
+
+if (
+    ua.includes("Firefox")
+) {
+
+    browser = "Firefox";
+
+} else if (
+    ua.includes("Edg")
+) {
+
+    browser = "Edge";
+
+} else if (
+    ua.includes("Chrome")
+) {
+
+    browser = "Chrome";
+
+} else if (
+    ua.includes("Safari")
+) {
+
+    browser = "Safari";
+
+}
+
+
+document.getElementById(
+    "browser"
+).textContent =
+    browser;
+
+
+document.getElementById(
+    "browserInfo"
+).textContent =
+    ua;
+
+
+/* NETWORK */
 
 const connection =
     navigator.connection ||
     navigator.mozConnection ||
     navigator.webkitConnection;
 
-if(connection){
 
-    document.getElementById("network").textContent =
-        connection.effectiveType || "Detectat";
+if (
+    connection
+) {
 
-    let extra = "";
+    document.getElementById(
+        "network"
+    ).textContent =
+        connection.effectiveType ||
+        "Detectată";
 
-    if(connection.downlink){
-        extra += connection.downlink + " Mbps";
+
+    let info = "";
+
+
+    if (
+        connection.downlink
+    ) {
+
+        info +=
+            connection.downlink +
+            " Mbps";
+
     }
 
-    if(connection.rtt){
-        extra += " • " + connection.rtt + " ms";
+
+    if (
+        connection.rtt
+    ) {
+
+        info +=
+            " • " +
+            connection.rtt +
+            " ms";
+
     }
 
-    document.getElementById("networkExtra").textContent = extra;
 
-}else{
+    document.getElementById(
+        "networkInfo"
+    ).textContent =
+        info;
 
-    document.getElementById("network").textContent =
+} else {
+
+    document.getElementById(
+        "network"
+    ).textContent =
         "Nedisponibil";
 
 }
 
 
-/* ---------------------------
-   BATERIE
---------------------------- */
+/* BATTERY */
 
-if(navigator.getBattery){
+if (
+    navigator.getBattery
+) {
 
-    navigator.getBattery().then(battery => {
+    navigator
+    .getBattery()
+    .then(battery => {
 
-        function updateBattery(){
+        function updateBattery() {
 
-            document.getElementById("battery").textContent =
-                Math.round(battery.level * 100) + "%";
+            document.getElementById(
+                "battery"
+            ).textContent =
+                Math.round(
+                    battery.level *
+                    100
+                ) +
+                "%";
 
-            document.getElementById("charging").textContent =
+
+            document.getElementById(
+                "charging"
+            ).textContent =
                 battery.charging
-                    ? "⚡ Se încarcă"
-                    : "🔋 Pe baterie";
+                ? "⚡ Se încarcă"
+                : "🔋 Pe baterie";
 
         }
 
+
         updateBattery();
+
 
         battery.addEventListener(
             "levelchange",
             updateBattery
         );
+
 
         battery.addEventListener(
             "chargingchange",
@@ -356,66 +855,66 @@ if(navigator.getBattery){
 
     });
 
-}else{
+} else {
 
-    document.getElementById("battery").textContent =
+    document.getElementById(
+        "battery"
+    ).textContent =
         "Nedisponibil";
 
 }
 
 
-/* ---------------------------
-   BROWSER
---------------------------- */
+/* ======================================
+   GPU DETECTION
+====================================== */
 
-let browser = "Browser necunoscut";
+function detectGPU() {
 
-if(ua.includes("Firefox")) browser = "Firefox";
-else if(ua.includes("Edg")) browser = "Microsoft Edge";
-else if(ua.includes("Chrome")) browser = "Chrome";
-else if(ua.includes("Safari")) browser = "Safari";
-
-document.getElementById("browser").textContent =
-    browser;
-
-document.getElementById("ua").textContent =
-    ua;
-
-
-/* ---------------------------
-   GPU WEBGL
---------------------------- */
-
-function detectGPU(){
-
-    try{
+    try {
 
         const canvas =
-            document.createElement("canvas");
+            document.createElement(
+                "canvas"
+            );
+
 
         const gl =
-            canvas.getContext("webgl") ||
-            canvas.getContext("experimental-webgl");
+            canvas.getContext(
+                "webgl"
+            ) ||
+            canvas.getContext(
+                "experimental-webgl"
+            );
 
-        if(!gl)
-            return "Nedisponibil";
 
-        const extension =
+        if (!gl) {
+
+            return "WebGL indisponibil";
+
+        }
+
+
+        const debugInfo =
             gl.getExtension(
                 "WEBGL_debug_renderer_info"
             );
 
-        if(extension){
+
+        if (
+            debugInfo
+        ) {
 
             return gl.getParameter(
-                extension.UNMASKED_RENDERER_WEBGL
+                debugInfo.UNMASKED_RENDERER_WEBGL
             );
 
         }
 
-        return "WebGL detectat";
 
-    }catch(e){
+        return "WebGL GPU";
+
+    } catch(error) {
 
         return "Nedisponibil";
 
@@ -423,218 +922,1110 @@ function detectGPU(){
 
 }
 
-document.getElementById("gpu").textContent =
+
+document.getElementById(
+    "gpu"
+).textContent =
     detectGPU();
 
 
-/* ---------------------------
-   CPU BENCHMARK
---------------------------- */
+/* ======================================
+   HELPERS
+====================================== */
 
-async function cpuBenchmark(){
+function sleep(ms) {
 
-    await new Promise(r => setTimeout(r,100));
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
 
-    const start = performance.now();
+}
 
-    let value = 0;
 
-    for(let i = 0; i < 12000000; i++){
+function median(numbers) {
 
-        value +=
-            Math.sqrt(i) *
-            Math.sin(i);
+    const sorted =
+        [...numbers]
+        .sort(
+            (a,b) =>
+                a-b
+        );
+
+
+    const middle =
+        Math.floor(
+            sorted.length / 2
+        );
+
+
+    if (
+        sorted.length % 2
+    ) {
+
+        return sorted[middle];
 
     }
 
-    const end = performance.now();
+
+    return (
+        sorted[middle - 1] +
+        sorted[middle]
+    ) / 2;
+
+}
+
+
+/* ======================================
+   CPU TEST
+====================================== */
+
+function cpuPass() {
+
+    const start =
+        performance.now();
+
+
+    let result = 0;
+
+
+    for (
+        let i = 1;
+        i < 4500000;
+        i++
+    ) {
+
+        result +=
+            Math.sqrt(i) *
+            Math.sin(i * .001) *
+            Math.cos(i * .002);
+
+    }
+
+
+    const end =
+        performance.now();
+
 
     return end - start;
 
 }
 
 
-/* ---------------------------
-   FPS TEST
---------------------------- */
+async function cpuBenchmark() {
 
-function fpsBenchmark(){
+    const results = [];
 
-    return new Promise(resolve => {
 
-        let frames = 0;
+    /*
+       Mai multe rulări fac
+       scorul mai stabil.
+    */
 
-        const start =
-            performance.now();
+    for (
+        let i = 0;
+        i < 3;
+        i++
+    ) {
 
-        function frame(){
+        await sleep(100);
 
-            frames++;
+        results.push(
+            cpuPass()
+        );
 
-            const now =
-                performance.now();
+    }
 
-            if(now - start >= 1500){
 
-                const fps =
-                    frames /
-                    ((now-start)/1000);
+    const time =
+        median(results);
 
-                resolve(fps);
 
-                return;
+    /*
+       Timp mic = scor mare.
+    */
 
-            }
+    let score =
+        20000000 /
+        Math.max(
+            time,
+            1
+        );
 
-            requestAnimationFrame(frame);
 
-        }
+    /*
+       Numărul de threads
+       influențează doar puțin.
+    */
 
-        requestAnimationFrame(frame);
+    score *=
+        1 +
+        Math.min(
+            cores,
+            16
+        ) * .025;
 
-    });
+
+    return {
+        time,
+        score:
+            Math.round(score)
+    };
 
 }
 
 
-/* ---------------------------
-   TEST PRINCIPAL
---------------------------- */
+/* ======================================
+   MEMORY TEST
+====================================== */
 
-async function runTest(){
+async function memoryBenchmark() {
 
-    const button =
-        document.getElementById("testBtn");
+    /*
+       Folosim un array relativ mare,
+       dar nu exagerăm pentru
+       telefoanele mai vechi.
+    */
 
-    const status =
-        document.getElementById("status");
-
-    const scoreBox =
-        document.getElementById("scoreBox");
-
-    const scoreElement =
-        document.getElementById("score");
-
-    const bar =
-        document.getElementById("bar");
+    const size =
+        1200000;
 
 
-    button.disabled = true;
-
-    scoreBox.style.display =
-        "block";
+    const start =
+        performance.now();
 
 
-    status.textContent =
-        "🧠 Testez procesorul...";
-
-    bar.style.width =
-        "20%";
+    const array =
+        new Float64Array(size);
 
 
-    const cpuTime =
-        await cpuBenchmark();
+    for (
+        let i = 0;
+        i < size;
+        i++
+    ) {
+
+        array[i] =
+            i * .1234;
+
+    }
 
 
-    status.textContent =
-        "🎮 Testez animația și FPS-ul...";
+    let sum = 0;
 
-    bar.style.width =
-        "55%";
 
+    for (
+        let i = 0;
+        i < size;
+        i += 4
+    ) {
+
+        sum += array[i];
+
+    }
+
+
+    const end =
+        performance.now();
+
+
+    const time =
+        end - start;
+
+
+    let score =
+        10000000 /
+        Math.max(
+            time,
+            1
+        );
+
+
+    return {
+        time,
+        score:
+            Math.round(score)
+    };
+
+}
+
+
+/* ======================================
+   UX / FPS TEST
+====================================== */
+
+function fpsBenchmark() {
+
+    return new Promise(
+        resolve => {
+
+            let frames = 0;
+
+            const start =
+                performance.now();
+
+
+            function frame(now) {
+
+                frames++;
+
+
+                if (
+                    now - start >= 2000
+                ) {
+
+                    const seconds =
+                        (
+                            now -
+                            start
+                        ) / 1000;
+
+
+                    const fps =
+                        frames /
+                        seconds;
+
+
+                    resolve(fps);
+
+                    return;
+
+                }
+
+
+                requestAnimationFrame(
+                    frame
+                );
+
+            }
+
+
+            requestAnimationFrame(
+                frame
+            );
+
+        }
+    );
+
+}
+
+
+async function uxBenchmark() {
 
     const fps =
         await fpsBenchmark();
 
 
-    status.textContent =
-        "📊 Calculez rezultatul...";
+    /*
+       requestAnimationFrame este
+       limitat de refresh rate,
+       deci nu-l folosim singur.
+    */
+
+
+    const start =
+        performance.now();
+
+
+    let operations = 0;
+
+
+    while (
+        performance.now() -
+        start <
+        350
+    ) {
+
+        Math.sqrt(
+            operations *
+            123.456
+        );
+
+        operations++;
+
+    }
+
+
+    let score =
+        fps * 900 +
+        operations * .08;
+
+
+    return {
+        fps,
+        operations,
+        score:
+            Math.round(score)
+    };
+
+}
+
+
+/* ======================================
+   GPU TEST
+====================================== */
+
+function gpuBenchmark() {
+
+    return new Promise(
+        resolve => {
+
+            const canvas =
+                document.getElementById(
+                    "gpuCanvas"
+                );
+
+
+            canvas.width =
+                500;
+
+            canvas.height =
+                500;
+
+
+            const gl =
+                canvas.getContext(
+                    "webgl",
+                    {
+                        antialias: false,
+                        alpha: false
+                    }
+                );
+
+
+            if (!gl) {
+
+                resolve({
+                    time: 0,
+                    score: 10000
+                });
+
+                return;
+
+            }
+
+
+            const vertexShaderSource = `
+
+                attribute vec2 position;
+
+                void main() {
+
+                    gl_Position =
+                        vec4(
+                            position,
+                            0.0,
+                            1.0
+                        );
+
+                }
+
+            `;
+
+
+            const fragmentShaderSource = `
+
+                precision mediump float;
+
+                uniform float time;
+
+                void main() {
+
+                    vec2 uv =
+                        gl_FragCoord.xy /
+                        vec2(
+                            500.0,
+                            500.0
+                        );
+
+                    float value =
+                        sin(
+                            uv.x *
+                            80.0 +
+                            time
+                        );
+
+                    value +=
+                        cos(
+                            uv.y *
+                            90.0 -
+                            time
+                        );
+
+                    value +=
+                        sin(
+                            (
+                                uv.x +
+                                uv.y
+                            ) *
+                            65.0
+                        );
+
+                    gl_FragColor =
+                        vec4(
+                            abs(
+                                sin(value)
+                            ),
+
+                            abs(
+                                cos(value)
+                            ),
+
+                            abs(
+                                sin(
+                                    value *
+                                    2.0
+                                )
+                            ),
+
+                            1.0
+                        );
+
+                }
+
+            `;
+
+
+            function createShader(
+                type,
+                source
+            ) {
+
+                const shader =
+                    gl.createShader(
+                        type
+                    );
+
+
+                gl.shaderSource(
+                    shader,
+                    source
+                );
+
+
+                gl.compileShader(
+                    shader
+                );
+
+
+                return shader;
+
+            }
+
+
+            const vertexShader =
+                createShader(
+                    gl.VERTEX_SHADER,
+                    vertexShaderSource
+                );
+
+
+            const fragmentShader =
+                createShader(
+                    gl.FRAGMENT_SHADER,
+                    fragmentShaderSource
+                );
+
+
+            const program =
+                gl.createProgram();
+
+
+            gl.attachShader(
+                program,
+                vertexShader
+            );
+
+
+            gl.attachShader(
+                program,
+                fragmentShader
+            );
+
+
+            gl.linkProgram(
+                program
+            );
+
+
+            gl.useProgram(
+                program
+            );
+
+
+            const buffer =
+                gl.createBuffer();
+
+
+            gl.bindBuffer(
+                gl.ARRAY_BUFFER,
+                buffer
+            );
+
+
+            gl.bufferData(
+                gl.ARRAY_BUFFER,
+
+                new Float32Array([
+                    -1,-1,
+                     1,-1,
+                    -1, 1,
+                    -1, 1,
+                     1,-1,
+                     1, 1
+                ]),
+
+                gl.STATIC_DRAW
+            );
+
+
+            const position =
+                gl.getAttribLocation(
+                    program,
+                    "position"
+                );
+
+
+            gl.enableVertexAttribArray(
+                position
+            );
+
+
+            gl.vertexAttribPointer(
+                position,
+                2,
+                gl.FLOAT,
+                false,
+                0,
+                0
+            );
+
+
+            const timeUniform =
+                gl.getUniformLocation(
+                    program,
+                    "time"
+                );
+
+
+            const start =
+                performance.now();
+
+
+            let frames = 0;
+
+
+            function draw() {
+
+                const now =
+                    performance.now();
+
+
+                gl.uniform1f(
+                    timeUniform,
+                    frames * .05
+                );
+
+
+                gl.drawArrays(
+                    gl.TRIANGLES,
+                    0,
+                    6
+                );
+
+
+                gl.finish();
+
+
+                frames++;
+
+
+                if (
+                    now -
+                    start <
+                    1200
+                ) {
+
+                    requestAnimationFrame(
+                        draw
+                    );
+
+                } else {
+
+                    const elapsed =
+                        now -
+                        start;
+
+
+                    const fps =
+                        frames /
+                        (
+                            elapsed /
+                            1000
+                        );
+
+
+                    /*
+                       Combinăm FPS GPU
+                       cu rezoluția canvasului.
+                    */
+
+                    let score =
+                        fps *
+                        1800;
+
+
+                    resolve({
+                        time:
+                            elapsed,
+
+                        fps,
+
+                        score:
+                            Math.round(
+                                score
+                            )
+                    });
+
+                }
+
+            }
+
+
+            requestAnimationFrame(
+                draw
+            );
+
+        }
+    );
+
+}
+
+
+/* ======================================
+   SCORE ANIMATION
+====================================== */
+
+function animateNumber(
+    element,
+    target,
+    duration = 800
+) {
+
+    const start =
+        performance.now();
+
+
+    function update(now) {
+
+        const progress =
+            Math.min(
+                (
+                    now -
+                    start
+                ) /
+                duration,
+                1
+            );
+
+
+        const value =
+            Math.floor(
+                target *
+                progress
+            );
+
+
+        element.textContent =
+            value.toLocaleString(
+                "ro-RO"
+            );
+
+
+        if (
+            progress < 1
+        ) {
+
+            requestAnimationFrame(
+                update
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        update
+    );
+
+}
+
+
+/* ======================================
+   MAIN BENCHMARK
+====================================== */
+
+async function startBenchmark() {
+
+    const button =
+        document.getElementById(
+            "testButton"
+        );
+
+
+    const benchmarkBox =
+        document.getElementById(
+            "benchmarkBox"
+        );
+
+
+    const resultsBox =
+        document.getElementById(
+            "results"
+        );
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const bar =
+        document.getElementById(
+            "progressBar"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "⏳ TESTARE...";
+
+
+    benchmarkBox.style.display =
+        "block";
+
+
+    resultsBox.style.display =
+        "none";
+
 
     bar.style.width =
-        "80%";
+        "5%";
 
 
-    await new Promise(
-        r => setTimeout(r,500)
+    /*
+       CPU
+    */
+
+    status.textContent =
+        "🧠 Testing CPU...";
+
+
+    bar.style.width =
+        "15%";
+
+
+    const cpu =
+        await cpuBenchmark();
+
+
+    bar.style.width =
+        "30%";
+
+
+    /*
+       GPU
+    */
+
+    status.textContent =
+        "🎮 Testing GPU...";
+
+
+    const gpu =
+        await gpuBenchmark();
+
+
+    bar.style.width =
+        "55%";
+
+
+    /*
+       MEMORY
+    */
+
+    status.textContent =
+        "💾 Testing Memory...";
+
+
+    const memory =
+        await memoryBenchmark();
+
+
+    bar.style.width =
+        "72%";
+
+
+    /*
+       UX
+    */
+
+    status.textContent =
+        "✨ Testing UX & FPS...";
+
+
+    const ux =
+        await uxBenchmark();
+
+
+    bar.style.width =
+        "90%";
+
+
+    status.textContent =
+        "📊 Calculating score...";
+
+
+    await sleep(
+        500
     );
 
 
     /*
-       CPU mai rapid =
-       timp mai mic.
+       Normalizare pentru
+       scorurile afișate.
+
+       Aceste scoruri sunt ALE
+       benchmark-ului nostru.
     */
 
+
     let cpuScore =
-        100000 / cpuTime;
-
-
-    let fpsScore =
-        fps * 7;
-
-
-    let coreScore =
-        (cores || 2) * 40;
-
-
-    let total =
         Math.round(
-            cpuScore +
-            fpsScore +
-            coreScore
+            cpu.score *
+            6
         );
 
 
-    total =
-        Math.max(100,total);
+    let gpuScore =
+        Math.round(
+            gpu.score *
+            2.3
+        );
 
 
-    scoreElement.textContent =
-        total;
+    let memoryScore =
+        Math.round(
+            memory.score *
+            3
+        );
+
+
+    let uxScore =
+        Math.round(
+            ux.score *
+            .8
+        );
+
+
+    /*
+       Limităm valori extreme
+       pentru a evita rezultate
+       complet absurde dacă browserul
+       măsoară greșit timpul.
+    */
+
+
+    cpuScore =
+        Math.min(
+            Math.max(
+                cpuScore,
+                10000
+            ),
+            500000
+        );
+
+
+    gpuScore =
+        Math.min(
+            Math.max(
+                gpuScore,
+                10000
+            ),
+            500000
+        );
+
+
+    memoryScore =
+        Math.min(
+            Math.max(
+                memoryScore,
+                10000
+            ),
+            300000
+        );
+
+
+    uxScore =
+        Math.min(
+            Math.max(
+                uxScore,
+                10000
+            ),
+            300000
+        );
+
+
+    /*
+       TOTAL
+    */
+
+    const total =
+        cpuScore +
+        gpuScore +
+        memoryScore +
+        uxScore;
+
+
+    /*
+       Afișare rezultate
+    */
+
+    resultsBox.style.display =
+        "block";
+
+
+    animateNumber(
+        document.getElementById(
+            "cpuScore"
+        ),
+        cpuScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "gpuScore"
+        ),
+        gpuScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "memoryScore"
+        ),
+        memoryScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "uxScore"
+        ),
+        uxScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "totalScore"
+        ),
+        total,
+        1200
+    );
+
+
+    /*
+       Rating
+    */
+
+    let rating;
+
+
+    if (
+        total <
+        150000
+    ) {
+
+        rating =
+            "🐢 Performanță modestă";
+
+    } else if (
+        total <
+        300000
+    ) {
+
+        rating =
+            "👍 Performanță decentă";
+
+    } else if (
+        total <
+        500000
+    ) {
+
+        rating =
+            "🔥 Performanță bună";
+
+    } else if (
+        total <
+        750000
+    ) {
+
+        rating =
+            "🚀 Performanță foarte bună";
+
+    } else {
+
+        rating =
+            "👑 Performanță excelentă";
+
+    }
+
+
+    document.getElementById(
+        "rating"
+    ).textContent =
+        rating;
 
 
     bar.style.width =
         "100%";
 
 
-    let message = "";
-
-
-    if(total < 500){
-
-        message =
-            "🐢 Dispozitiv modest";
-
-    }else if(total < 900){
-
-        message =
-            "👍 Performanță decentă";
-
-    }else if(total < 1400){
-
-        message =
-            "🔥 Dispozitiv rapid";
-
-    }else{
-
-        message =
-            "🚀 Performanță foarte bună";
-
-    }
-
-
     status.innerHTML =
-        message +
+        "✅ Benchmark terminat" +
         "<br><br>" +
-        "CPU test: " +
-        Math.round(cpuTime) +
+
+        "CPU: " +
+        Math.round(
+            cpu.time
+        ) +
         " ms" +
-        "<br>" +
-        "FPS aproximativ: " +
-        Math.round(fps);
+
+        " • GPU: " +
+        Math.round(
+            gpu.fps || 0
+        ) +
+        " FPS" +
+
+        " • UX: " +
+        Math.round(
+            ux.fps
+        ) +
+        " FPS";
 
 
     button.disabled =
         false;
+
 
     button.textContent =
         "🔄 TESTEAZĂ DIN NOU";
